@@ -4,12 +4,10 @@ import generation
 import mutation
 import time
 import pyfiglet
-import random
 from pathlib import Path
 from colorama import Fore, Style
 
 app = typer.Typer(help="a simple fuzz testing tool")
-
 
 @app.command("generate")
 def generatefuzz(target: str = typer.Argument(..., help="The target binary to fuzz"),
@@ -19,13 +17,10 @@ def generatefuzz(target: str = typer.Argument(..., help="The target binary to fu
     """
     Fuzzer = generation.Fuzzer(target, num_iterations, [])
     Fuzzer.fuzz()
-    start__time = time.time()
     if Fuzzer.crashes:
         print(f"Total crashes found: {len(Fuzzer.crashes)}")
     else:
-        print("No crashes found.")
-    end_time = time.time()
-    print("Time elapsed:", end_time - start__time, "seconds")    
+        print("No crashes found.")   
 
 @app.command("mutate")
 def mutatefuzz(target: str = typer.Argument(..., help="The target binary to fuzz"),
@@ -34,29 +29,11 @@ def mutatefuzz(target: str = typer.Argument(..., help="The target binary to fuzz
     Placeholder for mutation-based fuzzing.
     """
     Mutator = mutation.Mutation(target, num_iterations, [])
-    corpus_seed = set()
-    corpus_path = Path(__file__).resolve().parent / 'corpus'
-
-    for file in os.listdir(corpus_path):
-        if os.path.isfile(os.path.join(corpus_path, file)):
-            corpus_seed.add(file)
-
-
-    start_time = time.time()
-    for seed in corpus_seed:
-        try:
-            with open(os.path.join(corpus_path, seed), 'r') as f:
-                corpus_seed.add(f.read())
-                Mutator.run(target, f.read())
-        except IOError:
-            print(f"Could not read file: {seed}")
-
+    Mutator.fuzz()
     if Mutator.crashes:
         print(f"Total crashes found: {len(Mutator.crashes)}")
     else:
-        print("No crashes found.")
-    end_time = time.time()
-    print("Time elapsed:", end_time - start_time, "seconds")         
+        print("No crashes found.")   
 
 @app.command("api")
 def apifuzz():
@@ -81,7 +58,7 @@ def clear_corpus():
                 print(f"Error deleting file {file}: {e}")
         print("Corpus directory cleared.")
     else:
-        print("Corpus directory does not exist.")    
+        print("Corpus directory does not exist.")
 
 if __name__ == "__main__":
     ascii_banner = pyfiglet.figlet_format("fizz", font="larry3d")

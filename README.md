@@ -14,6 +14,7 @@ if it finds any valid inputs, it'll store them in the "corpus" folder for later 
 
 fizz employs a few techniques:
 -- generation-based: the fuzzer generates the data from scratch and feeds it into the program
+
 -- mutation-based: the fuzzer takes the valid data from the "corpus" folder and introduces small changes to possibly find new behavior. this method is more effective at finding new unexpected behavior.
 
 fizz currently only supports raw code, but it will support API fuzzing and web fuzzing in the future.
